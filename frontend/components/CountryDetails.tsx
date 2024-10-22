@@ -27,16 +27,17 @@ const CountryDetails = ({ slug }: { slug: string }) => {
   const [info, setInfo] = useState<Info | null>(null);
 
   const router = useRouter();
+  const baseUrl = process.env.BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await axios.get<Info>(
-        `http://localhost:3000/countryInfo/${slug.replaceAll(" ", "_")}`
+        baseUrl + `/countryInfo/${slug.replaceAll(" ", "_")}`
       );
       setInfo(data);
     };
     fetchData();
-  }, [slug]);
+  }, [baseUrl, slug]);
 
   const handleCountryClick = (country: string) => {
     router.push(`/details/${country.replaceAll(" ", "_")}`);

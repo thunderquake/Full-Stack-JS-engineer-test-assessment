@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export const dateNagerInstance = axios.create({
-  baseURL: "https://date.nager.at/api",
+  baseURL: process.env.DATE_NAGER_BASE_URL,
 });
 
 export const countriesnowInstance = axios.create({
-  baseURL: "https://countriesnow.space/api/v0.1/countries",
+  baseURL: process.env.COUNTRIES_NOW_BASE_URL,
 });

@@ -9,16 +9,17 @@ import { useRouter } from "next/navigation";
 const CountriesList = () => {
   const [countries, setCountries] = useState<{ name: string }[]>([]);
   const router = useRouter();
+  const baseUrl = process.env.BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await axios.get<{ name: string }[]>(
-        "http://localhost:3000/countries"
+        baseUrl + "/countries"
       );
       setCountries(data);
     };
     fetchData();
-  }, []);
+  }, [baseUrl]);
 
   const handleCountryClick = (country: string) => {
     router.push(`/details/${country.replaceAll(" ", "_")}`);
