@@ -1,9 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import CountryCard from "./CountryCard";
 import {
   Card,
   CardContent,
@@ -23,11 +25,12 @@ type Info = {
   populationData: { year: number; value: number }[];
 };
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
 const CountryDetails = ({ slug }: { slug: string }) => {
   const [info, setInfo] = useState<Info | null>(null);
 
   const router = useRouter();
-  const baseUrl = process.env.BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,21 +40,23 @@ const CountryDetails = ({ slug }: { slug: string }) => {
       setInfo(data);
     };
     fetchData();
-  }, [baseUrl, slug]);
+  }, [slug]);
 
   const handleCountryClick = (country: string) => {
     router.push(`/details/${country.replaceAll(" ", "_")}`);
   };
 
   return (
-    <div>
-      <button
+    <div className="flex flex-col">
+      <Button
+        className="mx-auto mb-6"
         onClick={() => {
           router.push("/");
         }}
       >
         Go back
-      </button>
+      </Button>
+
       <div className="flex flex-row justify-center">
         <p className="text-2xl">{slug}</p>
         {info?.flagData && (
@@ -69,13 +74,11 @@ const CountryDetails = ({ slug }: { slug: string }) => {
 
         <div className="cursor-pointer flex flex-wrap max-w-96 mx-auto">
           {info?.borderData.map((country) => (
-            <Card
-              key={country.officialName}
-              className="p-4 m-2 hover:bg-gray-200"
-              onClick={() => handleCountryClick(country.commonName)}
-            >
-              <CardTitle>{country.officialName}</CardTitle>
-            </Card>
+            <CountryCard
+              key={country.commonName}
+              country={country}
+              handleCountryClick={handleCountryClick}
+            />
           ))}
         </div>
       </div>
@@ -89,7 +92,7 @@ const CountryDetails = ({ slug }: { slug: string }) => {
             {info?.populationData && (
               <LineChart width={500} height={300} data={info?.populationData}>
                 <XAxis dataKey={"year"} />
-                <YAxis dataKey={"value"} />
+                <YAxis dataKey={"value"} width={90} />
                 <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                 <Line type="monotone" dataKey="value" stroke="#8884d8" />
               </LineChart>

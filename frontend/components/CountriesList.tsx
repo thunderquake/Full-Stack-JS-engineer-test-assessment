@@ -1,15 +1,15 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardTitle } from "./ui/card";
 
-import { useRouter } from "next/navigation";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 const CountriesList = () => {
   const [countries, setCountries] = useState<{ name: string }[]>([]);
   const router = useRouter();
-  const baseUrl = process.env.BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +19,7 @@ const CountriesList = () => {
       setCountries(data);
     };
     fetchData();
-  }, [baseUrl]);
+  }, []);
 
   const handleCountryClick = (country: string) => {
     router.push(`/details/${country.replaceAll(" ", "_")}`);
