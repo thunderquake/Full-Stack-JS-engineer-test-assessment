@@ -26,7 +26,6 @@ appRouter.get("/countries", async (req: Request, res: Response) => {
         return rest;
       }
     );
-    console.log(modifiedData);
 
     res.json(modifiedData);
   } catch (e) {
@@ -36,11 +35,14 @@ appRouter.get("/countries", async (req: Request, res: Response) => {
 
 appRouter.get("/countryInfo/:country", async (req: Request, res: Response) => {
   try {
-    const country = req.params.country;
+    const rawCountry = req.params.country;
+    const country = rawCountry.split("_").join(" ");
 
     const response = await dateNagerInstance.get("/v3/AvailableCountries");
+
     const countryCode = response.data.find(
-      (c: Country) => c.name === country
+      (c: Country) =>
+        c.name.toLowerCase().split(" ").join("_") === rawCountry.toLowerCase()
     ).countryCode;
 
     const { data: borderData } =
@@ -57,20 +59,32 @@ appRouter.get("/countryInfo/:country", async (req: Request, res: Response) => {
       }
     );
 
-    const {
-      data: { data: flagData },
-    } = await countriesnowInstance.post<FlagDataResponseType>("/flag/images", {
-      country,
-    });
+    let flagData = null;
+
+    try {
+      const {
+        data: { data: flagDataRes },
+      } = await countriesnowInstance.post<FlagDataResponseType>(
+        "/flag/images",
+        {
+          country: rawCountry,
+        }
+      );
+      flagData = flagDataRes;
+    } catch (e) {
+      console.error(`Error fetching Flag data for ${country} ` + e);
+    }
 
     res.json({
       borderData: borderData.borders,
       populationData: populationData.populationCounts,
-      flagData: flagData.flag,
+      flagData: flagData?.flag ?? "",
     });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: "Error fetching data from external API" });
+    // console.error(e);
+    res
+      .status(500)
+      .json({ message: "Error fetching data from external API" + e });
   }
 });
 
