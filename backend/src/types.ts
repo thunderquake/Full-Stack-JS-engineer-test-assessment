@@ -1,6 +1,4 @@
-export type AvailableCountriesResponseType = {
-  data: Country[];
-};
+export type AvailableCountriesResponseType = Country[];
 
 export type Country = { countryCode: string; name: string };
 

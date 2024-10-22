@@ -19,13 +19,14 @@ appRouter.get("/countries", async (req: Request, res: Response) => {
         "/v3/AvailableCountries"
       );
 
-    const data = response.data.data;
+    const data = response.data;
     const modifiedData = data.map(
       (country: { countryCode: string; name: string }) => {
         const { countryCode, ...rest } = country;
         return rest;
       }
     );
+    console.log(modifiedData);
 
     res.json(modifiedData);
   } catch (e) {
